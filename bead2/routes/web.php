@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ItemController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,7 +16,22 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
+/**
+ * / - home
+ * /item
+ * /item/label
+ * /item/create
+ * /item/update
+ *
+ * label -put/update
+ * comment -update/delete
+ *
+ * Source Controllers
+ * Item, Comment, Label
+ */
+
+
+/*Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -23,10 +39,12 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('home');
-
-Route::get('/valami', function () {
-    return redirect()->route('home');
+*/
+Route::get('/', function () {
+    return redirect()-> route('items.index');
 });
+
+Route::resource('items',ItemController::class);
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

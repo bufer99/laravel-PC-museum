@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+*{
+    box-sizing: border-box;
+}
+
+@layer components {
+    .active {
+        @apply z-10 bg-indigo-50 border-indigo-500 text-indigo-600;
+    }
+
+    .default {
+        @apply bg-white border-gray-300 text-gray-500 hover:bg-gray-50;
+    }
+
+    .inactive {
+        @apply bg-gray-50 hover:cursor-default pointer-events-none !important;
+    }
+}

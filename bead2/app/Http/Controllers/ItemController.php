@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 class ItemController extends Controller
 {
@@ -14,7 +17,9 @@ class ItemController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('Home', [
+            'items' => Item::orderBy('obtained', 'desc')->paginate(5)//Item::orderBy('obtained', 'desc')->get(),
+        ]);
     }
 
     /**
@@ -46,7 +51,10 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
-        //
+        //manuálisan 404?
+        return Inertia::render('Items/Show', [
+            'item' => Item::where('id',$item->id)->get(),
+        ]);
     }
 
     /**
