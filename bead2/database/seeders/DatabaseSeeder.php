@@ -34,10 +34,11 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('adminpwd'),
         ]);
 
-        $labels = \App\Models\Label::factory(rand(7,10))->create();
-        $items = \App\Models\Item::factory(rand(10,15))->create();
-        //comments foreign keys must be nullable to avoid ERRROR
-        $comments = \App\Models\Comment::factory(rand(10,15))->create();
+        //unique kell majd mert a faker gyakran dobja ugyanazt (label.name)
+        $labels = \App\Models\Label::factory(rand(15,20))->create();
+        $items = \App\Models\Item::factory(rand(15,20))->create();
+        //comments foreign keys must be nullable to avoid ERROR
+        $comments = \App\Models\Comment::factory(rand(20,25))->create();
 
 
         $comments->each(function ($comment) use (&$users, &$items) {

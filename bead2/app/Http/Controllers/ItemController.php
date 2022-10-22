@@ -53,7 +53,9 @@ class ItemController extends Controller
     {
         //manuálisan 404?
         return Inertia::render('Items/Show', [
-            'item' => Item::where('id',$item->id)->get(),
+            'item' => Item::find($item->id),
+            'labels' => Item::find($item->id)->label,
+            'comments' =>  Item::find($item->id)->comment()->with('user')->get(), // with('user') -> A Modells/Comment->user() func. nevéből jön.
         ]);
     }
 
