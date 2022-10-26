@@ -6,10 +6,14 @@ export default function Guest({ children }) {
     return (
         <div className="container mx-auto">
             <div className="flex justify-start p-2 bg-red-300">
-                <Link href='/'>PCM</Link>
+                <Link href={route('items.index')}>PCM</Link>
                 <div className="flex justify-end w-full gap-2">
-                    <div>Új címke</div>
-                    <div>Új Tárgy</div>
+                    <Link href={route('labels.create')}>
+                        Új címke
+                    </Link>
+                    <Link href={route('items.create')}>
+                        Új tárgy
+                    </Link>
                 </div>
             </div>
             {children}

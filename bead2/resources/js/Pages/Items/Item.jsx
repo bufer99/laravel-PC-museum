@@ -1,5 +1,5 @@
 import React from 'react';
-import placeholder from '../../../public/images/placeholder.png';
+import placeholder from '../../../../public/images/placeholder.png';
 import { Link } from '@inertiajs/inertia-react';
 
 export default function Item({ item }) {

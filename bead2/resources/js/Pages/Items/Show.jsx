@@ -2,13 +2,15 @@ import React from 'react';
 import { Link, Head } from '@inertiajs/inertia-react';
 import Guest from '@/Layouts/GuestLayout';
 
-import Item from '@/Components/Item';
+import Item from '@/Pages/Items/Item';
 import Pagination from '@/Components/Pagination';
+import Comment from './Comment';
+import { useState } from 'react';
 
-export default function Welcome(props) {
+export default function Create(props) {
     const { item, labels, comments } = props;
-    console.log(item)
-    console.log(comments)
+    const [activeComment, setActiveComment] = useState(null)
+
     {/*postot összehúzni*/ }
     return (
         <Guest>
@@ -27,7 +29,15 @@ export default function Welcome(props) {
                 <div>{item.description}</div>
 
             </div>
-            {/*<Comments></Comments>*/}
+            {/**MARGIN SET FOR DEV */}
+            <div className='max-w-screen-md mx-auto mb-60'>
+                <div className="border-b-2 font-bold">{comments.length} Comments </div>
+                <div className='flex flex-col gap-3'>
+                    {comments.map(e => (
+                        <Comment data={e} SetActive={setActiveComment} active={activeComment === e.id} />
+                    ))}
+                </div>
+            </div>
         </Guest>
     );
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\LabelController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -45,6 +46,7 @@ Route::get('/', function () {
 });
 
 Route::resource('items',ItemController::class);
+Route::resource('labels',LabelController::class);
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

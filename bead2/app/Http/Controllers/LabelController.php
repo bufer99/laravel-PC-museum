@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Item;
+use App\Models\Label;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-class ItemController extends Controller
+class LabelController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +15,7 @@ class ItemController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Home', [
-            'items' => Item::orderBy('obtained', 'desc')->paginate(5)//Item::orderBy('obtained', 'desc')->get(),
-        ]);
+        //
     }
 
     /**
@@ -29,7 +25,7 @@ class ItemController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Items/Create');
+        return Inertia::render('Labels/Create');
     }
 
     /**
@@ -40,33 +36,45 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate(
+            [
+                'name' => 'required|unique:labels|max:25',
+                //'style' => 'required|in:primary,secondary,danger,warning,info,dark',
+                'display' => 'required|boolean',
+                'color' => 'required|min:7|max:7'
+            ],
+            // Egyéni hibaüzenetek:
+            /*[
+                // Minden require-ra vonatkozik:
+                //'required' => 'Field is required',
+
+                // Ilyenkor csak a name mezőre vonatkozik
+                'name.required' => 'Name is required',
+            ]*/
+        );
+
+        //return Redirect::route('users.show', $user);
+
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Item  $item
+     * @param  \App\Models\Label  $label
      * @return \Illuminate\Http\Response
      */
-    public function show(Item $item)
+    public function show(Label $label)
     {
-        //manuálisan 404?
-
-        return Inertia::render('Items/Show', [
-            'item' => Item::find($item->id),
-            'labels' => Item::find($item->id)->label,
-            'comments' =>  Item::find($item->id)->comment()->orderBy('created_at','DESC')->with('user')->get(), // with('user') -> A Modells/Comment->user() func. nevéből jön.
-        ]);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Item  $item
+     * @param  \App\Models\Label  $label
      * @return \Illuminate\Http\Response
      */
-    public function edit(Item $item)
+    public function edit(Label $label)
     {
         //
     }
@@ -75,10 +83,10 @@ class ItemController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Item  $item
+     * @param  \App\Models\Label  $label
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Item $item)
+    public function update(Request $request, Label $label)
     {
         //
     }
@@ -86,10 +94,10 @@ class ItemController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Item  $item
+     * @param  \App\Models\Label  $label
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Item $item)
+    public function destroy(Label $label)
     {
         //
     }
