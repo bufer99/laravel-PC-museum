@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Label extends Model
 {
     public function item(){
-        return $this->belongsToMany(Item::class);
+        return $this->belongsToMany(Item::class)->withTimestamps();
     }
     use HasFactory;
 }

@@ -12,7 +12,7 @@ class Item extends Model
     }
 
     public function label(){
-        return $this->belongsToMany(Label::class);
+        return $this->belongsToMany(Label::class)->withTimestamps();
     }
 
     use HasFactory;

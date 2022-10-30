@@ -35,10 +35,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         //unique kell majd mert a faker gyakran dobja ugyanazt (label.name)
+        //solution: factory: fake()->unique()
         $labels = \App\Models\Label::factory(rand(15,20))->create();
-        $items = \App\Models\Item::factory(rand(15,20))->create();
+
+        $items = \App\Models\Item::factory(rand(15, 20))->create();
         //comments foreign keys must be nullable to avoid ERROR
-        $comments = \App\Models\Comment::factory(rand(20,25))->create();
+        $comments = \App\Models\Comment::factory(rand(20, 25))->create();
 
 
         $comments->each(function ($comment) use (&$users, &$items) {
@@ -48,7 +50,7 @@ class DatabaseSeeder extends Seeder
             $comment->item()->associate($items->random())->save();
         });
 
-        $items->each(function($item) use(&$labels) {
+        $items->each(function ($item) use (&$labels) {
 
             //item, labels belongstoMany
             $item->label()->sync(
