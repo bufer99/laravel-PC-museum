@@ -5,14 +5,18 @@ import Guest from '@/Layouts/GuestLayout';
 import { usePage } from '@inertiajs/inertia-react'
 import { HexColorPicker } from "react-colorful";
 
-export default function Create() {
+export default function Edit(props) {
     const { errors, flash } = usePage().props
+    const { id, name, display, color } = props.label;
 
-    const [values, setValues] = useState({
-        name: null,
-        display: false,
-        color: '#fffffff',
-    })
+    const initState = {
+        name: name,
+        display: display === 1,
+        color: color,
+    }
+
+    console.log(props)
+    const [values, setValues] = useState(initState)
 
     const handleRadioChange = (e) => {
         //console.log(e.target.checked)
@@ -39,17 +43,12 @@ export default function Create() {
     const submit = (e) => {
         e.preventDefault()
         console.log(values)
-        Inertia.post('/labels', values, {
-            onSuccess: () => {
-                setValues({
-                    name: null,
-                    display: false,
-                    color: '#fffffff',
-                })
-            },
-            preserveState: false
-            //route('labels.store')
-        })
+        Inertia.put(`/labels/${id}`, values)
+    }
+
+    const destroy = (e) => {
+        e.preventDefault()
+        Inertia.delete(`/labels/${id}`, props.label)
     }
 
     const setColor = (e) => {
@@ -116,7 +115,10 @@ export default function Create() {
                     />
                 </label>
 
-                <button className='border-10 border-black-200' type="submit" disabled={false}>KÉSZ</button>
+                <div className="flex justify-around">
+                    <button className='border-10 border-black-200' type="submit" disabled={false}>KÉSZ</button>
+                    <button className='border-10 border-black-200' onClick={destroy} disabled={values !== initState}>TÖRÖL</button>
+                </div>
             </form>
         </Guest>
     );

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Label;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class LabelController extends Controller
@@ -15,7 +18,9 @@ class LabelController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('Labels/Index', [
+            'labels' => Label::all()
+        ]);
     }
 
     /**
@@ -41,20 +46,34 @@ class LabelController extends Controller
                 'name' => 'required|unique:labels|max:25',
                 //'style' => 'required|in:primary,secondary,danger,warning,info,dark',
                 'display' => 'required|boolean',
-                'color' => 'required|min:7|max:7'
+                'color' => ['required', 'min:7', 'max:7', Rule::notIn(['#NaNNaNNaN']),]
             ],
             // Egyéni hibaüzenetek:
-            /*[
+            [
                 // Minden require-ra vonatkozik:
                 //'required' => 'Field is required',
+                'name.required' => 'Név megadása kötelező!',
+                'name.unique' => 'Ilyen nevű címke már létezik!',
+                'name.max' => 'A címke neve maximum 25 karakter lehet!',
 
-                // Ilyenkor csak a name mezőre vonatkozik
-                'name.required' => 'Name is required',
-            ]*/
+                'display.required' => 'Láthatóság megjelölése kötelező!',
+                'display.boolean' => 'Láthatóság értéke csak igaz/hamis lehet!',
+
+                'color.required' => 'Szín megadása kötelező!',
+                'color.min' => 'Szín csak hexadecimális lehet!',
+                'color.max' => 'Szín csak hexadecimális lehet!',
+            ]
         );
 
-        //return Redirect::route('users.show', $user);
+        Label::factory()->create($validated);
 
+        //Session::flash('label_created', $validated['name']);
+
+
+        //return Redirect::route('labels.create');
+
+        //TODO: redirect to labels.create de a form nem resetelődik
+        return Redirect::back()->with('label_created', $validated['name']);
     }
 
     /**
@@ -76,7 +95,9 @@ class LabelController extends Controller
      */
     public function edit(Label $label)
     {
-        //
+        return Inertia::render('Labels/Edit', [
+            'label' => $label,
+        ]);
     }
 
     /**
@@ -88,7 +109,36 @@ class LabelController extends Controller
      */
     public function update(Request $request, Label $label)
     {
-        //
+        $validated = $request->validate(
+            [
+                'name' => 'required|unique:labels|max:25',
+                //'style' => 'required|in:primary,secondary,danger,warning,info,dark',
+                'display' => 'required|boolean',
+                'color' => ['required', 'min:7', 'max:7', Rule::notIn(['#NaNNaNNaN']),]
+            ],
+            // Egyéni hibaüzenetek:
+            [
+                // Minden require-ra vonatkozik:
+                //'required' => 'Field is required',
+                'name.required' => 'Név megadása kötelező!',
+                'name.unique' => 'Ilyen nevű címke már létezik!',
+                'name.max' => 'A címke neve maximum 25 karakter lehet!',
+
+                'display.required' => 'Láthatóság megjelölése kötelező!',
+                'display.boolean' => 'Láthatóság értéke csak igaz/hamis lehet!',
+
+                'color.required' => 'Szín megadása kötelező!',
+                'color.min' => 'Szín csak hexadecimális lehet!',
+                'color.max' => 'Szín csak hexadecimális lehet!',
+            ]
+        );
+
+        $label->name = $validated['name'];
+        $label->display = $validated['display'];
+        $label->color = $validated['color'];
+        $label->save();
+
+        return Redirect::back()->with('message', $validated['name']);
     }
 
     /**
@@ -99,6 +149,12 @@ class LabelController extends Controller
      */
     public function destroy(Label $label)
     {
-        //
+       // $this->authorize('delete', $post);
+
+        $label->delete();
+
+        Session::flash('post_deleted', $label->name);
+
+        return Redirect::route('labels.index');
     }
 }
