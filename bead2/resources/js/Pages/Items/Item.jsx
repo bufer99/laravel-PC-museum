@@ -3,6 +3,7 @@ import placeholder from '../../../../public/images/placeholder.png';
 import { Link } from '@inertiajs/inertia-react';
 
 export default function Item({ item }) {
+    console.log(item)
     const {name, image , obtained, description, id} = item;
 
     return (

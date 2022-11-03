@@ -45,8 +45,10 @@ Route::get('/', function () {
     return redirect()-> route('items.index');
 });
 
+Route::get('items/label/{label}', [ItemController::class, 'labels'])->name('items.label');
 Route::resource('items',ItemController::class);
 Route::resource('labels',LabelController::class);
+//Route::get('/items/{label}', LabelController::class)->name('itemsbyLabel');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

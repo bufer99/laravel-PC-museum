@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\Label;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,14 @@ use Inertia\Inertia;
 
 class ItemController extends Controller
 {
+
+    public function labels(Label $label){
+        error_log('LABEL: '.$label);
+        return Inertia::render('Home', [
+            'label' => $label,
+            'items' => Label::find($label->id)->item()->paginate(5)
+        ]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -29,7 +38,9 @@ class ItemController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Items/Create');
+        return Inertia::render('Items/Create',[
+            'labels' => Label::all()
+        ]);
     }
 
     /**
@@ -56,7 +67,7 @@ class ItemController extends Controller
         return Inertia::render('Items/Show', [
             'item' => Item::find($item->id),
             'labels' => Item::find($item->id)->label,
-            'comments' =>  Item::find($item->id)->comment()->orderBy('created_at','DESC')->with('user')->get(), // with('user') -> A Modells/Comment->user() func. nevéből jön.
+            'comments' => Item::find($item->id)->comment()->orderBy('created_at','DESC')->with('user')->get(), // with('user') -> A Modells/Comment->user() func. nevéből jön.
         ]);
     }
 

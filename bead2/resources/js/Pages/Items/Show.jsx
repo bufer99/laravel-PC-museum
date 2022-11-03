@@ -22,7 +22,9 @@ export default function Create(props) {
                 <div className='flex flex-wrap gap-2 w-full'>
                     {labels.filter(e => e.display).map(e => (
                         <div key={e.name} style={{ background: `${e.color}` }} className='rounded px-2 py-1'>
-                            {e.name}
+                            <Link href={route('items.label', e)}>
+                                {e.name}
+                            </Link>
                         </div>
                     ))}
                 </div>
