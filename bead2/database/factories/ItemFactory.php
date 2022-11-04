@@ -19,8 +19,7 @@ class ItemFactory extends Factory
         return [
             'name' => fake() -> word(),
             'description' => fake() -> text(),
-            'obtained' => fake() -> dateTimeBetween('-1 month','now') ,
-            'image' => fake() -> imageUrl(640, 480, 'cats', true, 'Faker', true),
+            'obtained' => fake() -> dateTimeBetween('-1 month','now'),
         ];
     }
 }

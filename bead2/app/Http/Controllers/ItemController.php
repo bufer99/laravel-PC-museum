@@ -8,12 +8,19 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ItemController extends Controller
 {
 
-    public function labels(Label $label){
-        error_log('LABEL: '.$label);
+    public function labels(Label $label)
+    {
+        error_log('LABEL: ' . $label);
         return Inertia::render('Home', [
             'label' => $label,
             'items' => Label::find($label->id)->item()->paginate(5)
@@ -27,7 +34,7 @@ class ItemController extends Controller
     public function index()
     {
         return Inertia::render('Home', [
-            'items' => Item::orderBy('obtained', 'desc')->paginate(5)//Item::orderBy('obtained', 'desc')->get(),
+            'items' => Item::orderBy('obtained', 'desc')->paginate(5) //Item::orderBy('obtained', 'desc')->get(),
         ]);
     }
 
@@ -38,7 +45,7 @@ class ItemController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Items/Create',[
+        return Inertia::render('Items/Create', [
             'labels' => Label::all()
         ]);
     }
@@ -51,7 +58,61 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //error_log(collect($request->input('formLabels'))->implode('-'));
+
+        $label_ids = Label::pluck('id')->toArray();
+        $validated = $request->validate(
+            [
+                'name' => 'required|min:3|max:25',
+                'description' => 'required|max:255',
+                'image' => 'nullable|file|image|max:4096',
+                'formLabels' => 'array',
+                'formLabels.*' => Rule::in($label_ids)
+            ],
+            // Egyéni hibaüzenetek:
+            [
+                // Minden require-ra vonatkozik:
+                //'required' => 'Field is required',
+                'name.required' => 'Név megadása kötelező!',
+                'name.min' => 'A tárgy nevének min. 3 karaterből kell állnia',
+                'name.max' => 'A tárgy neve maximum 25 karakter lehet!',
+
+                'description.required' => 'Leírás megadása kötelező!',
+                'description.max' => 'A leírás max. 255 karakter lehet!',
+
+                'image.file' => 'Kérjük képet töltsön fel!',
+                'image.max' => 'A feltöltött kép túl nagy!',
+
+                //'formLabels.*' => 'Ilyen címke nincs!'
+            ]
+        );
+
+        $image_path = null;
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+
+            $image_path = 'image_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+
+            Storage::disk('public')
+                ->put(
+                    // File útvonala
+                    $image_path,
+                    // File tartalma
+                    $file->get()
+                );
+        }
+
+        $item = Item::factory()->create([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'obtained' => date('Y-m-d H:i:s'),
+            'image' => $image_path
+        ]);
+
+        $item->label()->sync($request->input('formLabels'));
+
+        return Redirect::route('items.index')->with('item_created', $validated['name']);
     }
 
     /**
@@ -63,11 +124,16 @@ class ItemController extends Controller
     public function show(Item $item)
     {
         //manuálisan 404?
+        $img = null;
+        //error_log(Storage::disk('public')->exists($item->image));
+        //error_log(Storage::disk('public')->get($item->image));
+        error_log(env('url'));
+
 
         return Inertia::render('Items/Show', [
             'item' => Item::find($item->id),
             'labels' => Item::find($item->id)->label,
-            'comments' => Item::find($item->id)->comment()->orderBy('created_at','DESC')->with('user')->get(), // with('user') -> A Modells/Comment->user() func. nevéből jön.
+            'comments' => Item::find($item->id)->comment()->orderBy('created_at', 'DESC')->with('user')->get(), // with('user') -> A Modells/Comment->user() func. nevéből jön.
         ]);
     }
 

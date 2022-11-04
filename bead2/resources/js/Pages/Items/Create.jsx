@@ -4,6 +4,7 @@ import { Link, Head } from '@inertiajs/inertia-react';
 import Guest from '@/Layouts/GuestLayout';
 import { usePage } from '@inertiajs/inertia-react'
 import { HexColorPicker } from "react-colorful";
+import placeholder from '../../../../public/images/placeholder.png';
 
 export default function Create(props) {
     const { errors, flash } = usePage().props
@@ -24,15 +25,17 @@ export default function Create(props) {
     }
 
     useEffect(() => {
-        console.log(formLabels)
-    }, [formLabels])
+        console.log(errors)
+        //console.log(values)
+        //console.log(formLabels)
+    }, [values, formLabels, errors])
 
     const handleChange = (e) => {
         console.log(errors[e.target.id])
 
         setValues(values => ({
             ...values,
-            [labels]: e.target.value,
+            [e.target.id]: e.target.value,
         }))
 
         console.log(values)
@@ -41,7 +44,8 @@ export default function Create(props) {
     const submit = (e) => {
         e.preventDefault()
         console.log(values)
-        Inertia.post('/labels', values, {
+        Inertia.post('/items', {...values, formLabels}, {
+            forceFormData: true,
             onSuccess: () => {
                 setValues({
                     name: null,
@@ -65,6 +69,16 @@ export default function Create(props) {
                         type="text"
                         value={values.name}
                         placeholder={errors.name}
+                        onChange={handleChange}
+                    />
+                </label>
+                <label className="flex flex-col gap-5">
+                    <span>Leírás</span>
+                    <textarea
+                        className={errors.description ? `placeholder-red-500` : null}
+                        id="description"
+                        value={values.description}
+                        placeholder={errors.description}
                         onChange={handleChange}
                     />
                 </label>
@@ -95,16 +109,9 @@ export default function Create(props) {
                         </div>
                     </div>
                 </div>
-                <label className="flex flex-col gap-5">
-                    <span>Leírás</span>
-                    <textarea
-                        className={errors.name ? `placeholder-red-500` : null}
-                        id="description"
-                        value={values.description}
-                        placeholder={errors.name}
-                        onChange={handleChange}
-                    />
-                </label>
+
+                <input type="file" onChange={e => setValues(values => ({ ...values, image: e.target.files[0] }))} />
+                <img src={values.image ? URL.createObjectURL(values.image) : placeholder} />
 
                 <button className='border-10 border-black-200' type="submit" disabled={false}>KÉSZ</button>
             </form>
