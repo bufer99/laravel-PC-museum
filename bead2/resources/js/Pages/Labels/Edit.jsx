@@ -15,8 +15,17 @@ export default function Edit(props) {
         color: color,
     }
 
-    console.log(props)
     const [values, setValues] = useState(initState)
+
+    useEffect(() => {
+        if (errors.length !== 0) {
+            setValues((prevState) => ({
+                ...prevState,
+                name: errors.name ? '' : prevState.name,
+                color: errors.color ? '' : prevState.color
+            }))
+        }
+    }, [errors])
 
     const handleRadioChange = (e) => {
         //console.log(e.target.checked)
@@ -108,10 +117,12 @@ export default function Edit(props) {
                         <div className="w-40 h-40" style={{ backgroundColor: values.color }}></div>
                     </div>
                     <input
+                        className={errors.color ? `placeholder-red-500` : null}
                         id="color"
                         type="text"
                         value={values.color}
                         onChange={handleChange}
+                        placeholder={errors.color}
                     />
                 </label>
 

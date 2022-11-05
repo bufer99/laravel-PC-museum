@@ -3,58 +3,54 @@ import { Inertia } from '@inertiajs/inertia'
 import { Link, Head } from '@inertiajs/inertia-react';
 import Guest from '@/Layouts/GuestLayout';
 import { usePage } from '@inertiajs/inertia-react'
-import { HexColorPicker } from "react-colorful";
 import placeholder from '../../../../public/images/placeholder.png';
+import { isColorDark } from "is-color-dark";
 
 export default function Create(props) {
     const { errors, flash } = usePage().props
+
     const { labels } = props;
 
     const [values, setValues] = useState({
-        name: null,
-        description: null,
+        name: '',
+        description: '',
         image: null
     })
 
     const [formLabels, setFormLabels] = useState([]);
 
     const handleCheckBoxChange = (e) => {
-        console.log(e.target)
+        //console.log(e.target)
         if (formLabels.includes(Number.parseInt(e.target.id))) setFormLabels(formLabels.filter(id => id !== Number.parseInt(e.target.id)))
         else setFormLabels([...formLabels, Number.parseInt(e.target.id)])
     }
 
     useEffect(() => {
-        console.log(errors)
-        //console.log(values)
-        //console.log(formLabels)
-    }, [values, formLabels, errors])
+        if (errors.length !== 0) {
+            setValues((prevState) => ({
+                name: errors.name ? '' : prevState.name,
+                description: errors.description ? '' : prevState.description,
+                image: errors.image ? null : prevState.image,
+            }))
+        }
+    }, [errors])
 
     const handleChange = (e) => {
-        console.log(errors[e.target.id])
+        //console.log(errors[e.target.id])
 
         setValues(values => ({
             ...values,
             [e.target.id]: e.target.value,
         }))
 
-        console.log(values)
+        //console.log(values)
     }
 
     const submit = (e) => {
         e.preventDefault()
         console.log(values)
-        Inertia.post('/items', {...values, formLabels}, {
+        Inertia.post('/items', { ...values, formLabels }, {
             forceFormData: true,
-            onSuccess: () => {
-                setValues({
-                    name: null,
-                    display: false,
-                    color: '#fffffff',
-                })
-            },
-            preserveState: false
-            //route('labels.store')
         })
     }
 
@@ -87,7 +83,7 @@ export default function Create(props) {
                     <div className='flex flex-col items-center gap-0 xs:flex-row xs:gap-10'>
                         <div className='flex flex-wrap gap-2'>
                             {labels.map(e => (
-                                <label className='flex items-center gap-3'>
+                                <label key={e.id} className='flex items-center gap-3'>
                                     <input
                                         type="checkbox"
                                         value={e.id}
@@ -99,7 +95,7 @@ export default function Create(props) {
                                     <div
                                         className='rounded px-2 py-1'
                                         key={e.name}
-                                        style={{ background: `${e.color}` }}
+                                        style={{ background: `${e.color}`, color: isColorDark(e.color) ? 'white' : 'black'}}
                                         onClick={() => console.log(e.name)}
                                     >
                                         {e.name}

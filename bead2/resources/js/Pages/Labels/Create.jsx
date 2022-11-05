@@ -5,14 +5,25 @@ import Guest from '@/Layouts/GuestLayout';
 import { usePage } from '@inertiajs/inertia-react'
 import { HexColorPicker } from "react-colorful";
 
+
 export default function Create() {
     const { errors, flash } = usePage().props
 
     const [values, setValues] = useState({
-        name: null,
+        name: '',
         display: false,
-        color: '#fffffff',
+        color: '#ffffff',
     })
+
+    useEffect(() => {
+        if (errors.length !== 0) {
+            setValues((prevState) => ({
+                ...prevState,
+                name: errors.name ? '' : prevState.name,
+                color: errors.color ? '' : prevState.color
+            }))
+        }
+    }, [errors])
 
     const handleRadioChange = (e) => {
         //console.log(e.target.checked)
@@ -42,13 +53,11 @@ export default function Create() {
         Inertia.post('/labels', values, {
             onSuccess: () => {
                 setValues({
-                    name: null,
+                    name: '',
                     display: false,
-                    color: '#fffffff',
+                    color: '#ffffff',
                 })
             },
-            preserveState: false
-            //route('labels.store')
         })
     }
 
@@ -109,10 +118,12 @@ export default function Create() {
                         <div className="w-40 h-40" style={{ backgroundColor: values.color }}></div>
                     </div>
                     <input
+                        className={errors.color ? `placeholder-red-500` : null}
                         id="color"
                         type="text"
                         value={values.color}
                         onChange={handleChange}
+                        placeholder={errors.color}
                     />
                 </label>
 

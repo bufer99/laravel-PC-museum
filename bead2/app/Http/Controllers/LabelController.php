@@ -109,9 +109,10 @@ class LabelController extends Controller
      */
     public function update(Request $request, Label $label)
     {
+        $allOtherLabels = Label::whereNotIn('name',[$label->name])->pluck('name');
         $validated = $request->validate(
             [
-                'name' => 'required|unique:labels|max:25',
+                'name' => ['required','max:25', Rule::notIn($allOtherLabels)],
                 //'style' => 'required|in:primary,secondary,danger,warning,info,dark',
                 'display' => 'required|boolean',
                 'color' => ['required', 'min:7', 'max:7', Rule::notIn(['#NaNNaNNaN']),]
@@ -121,8 +122,8 @@ class LabelController extends Controller
                 // Minden require-ra vonatkozik:
                 //'required' => 'Field is required',
                 'name.required' => 'Név megadása kötelező!',
-                'name.unique' => 'Ilyen nevű címke már létezik!',
                 'name.max' => 'A címke neve maximum 25 karakter lehet!',
+                'name.*' => 'Ilyen nevű címke már létezik!',
 
                 'display.required' => 'Láthatóság megjelölése kötelező!',
                 'display.boolean' => 'Láthatóság értéke csak igaz/hamis lehet!',
@@ -138,7 +139,7 @@ class LabelController extends Controller
         $label->color = $validated['color'];
         $label->save();
 
-        return Redirect::back()->with('message', $validated['name']);
+        return Redirect::route('labels.index')->with('message', $validated['name']);
     }
 
     /**

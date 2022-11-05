@@ -3,68 +3,63 @@ import { Inertia } from '@inertiajs/inertia'
 import { Link, Head } from '@inertiajs/inertia-react';
 import Guest from '@/Layouts/GuestLayout';
 import { usePage } from '@inertiajs/inertia-react'
-import { HexColorPicker } from "react-colorful";
+import placeholder from '../../../../public/images/placeholder.png';
+import { isColorDark } from "is-color-dark";
 
 export default function Edit(props) {
     const { errors, flash } = usePage().props
-    const { id, name, display, color } = props.label;
-
-    const initState = {
-        name: name,
-        display: display === 1,
-        color: color,
-    }
-
     console.log(props)
-    const [values, setValues] = useState(initState)
+    const { item, all_labels, active_labels } = props;
 
-    const handleRadioChange = (e) => {
-        //console.log(e.target.checked)
-        const b = e.target.value === 'true'
-        //console.log(b)
-        setValues(values => ({
-            ...values,
-            [e.target.id]: b,
-        }))
-        console.log(values)
+    const [values, setValues] = useState({
+        name: item.name,
+        description: item.description,
+        image: null
+    })
+
+    const [formLabels, setFormLabels] = useState(active_labels.map(e => e.id));
+
+    const handleCheckBoxChange = (e) => {
+        //console.log(e.target)
+        if (formLabels.includes(Number.parseInt(e.target.id))) setFormLabels(formLabels.filter(id => id !== Number.parseInt(e.target.id)))
+        else setFormLabels([...formLabels, Number.parseInt(e.target.id)])
     }
+
+    useEffect(() => {
+        if (errors.length !== 0) {
+            setValues((prevState) => ({
+                name: errors.name ? '' : prevState.name,
+                description: errors.description ? '' : prevState.description,
+                image: errors.image ? null : prevState.image,
+            }))
+        }
+    }, [errors])
 
     const handleChange = (e) => {
-        console.log(errors[e.target.id])
+        //console.log(errors[e.target.id])
 
         setValues(values => ({
             ...values,
             [e.target.id]: e.target.value,
         }))
 
-        console.log(values)
+        //console.log(values)
     }
 
     const submit = (e) => {
         e.preventDefault()
         console.log(values)
-        Inertia.put(`/labels/${id}`, values)
-    }
+        const data = { _method: 'put',...values, formLabels }
+        console.log(data)
+        Inertia.post(`/items/${item.id}`, data);
 
-    const destroy = (e) => {
-        e.preventDefault()
-        Inertia.delete(`/labels/${id}`, props.label)
-    }
-
-    const setColor = (e) => {
-        console.log(e)
-        setValues(values => ({
-            ...values,
-            ['color']: e,
-        }))
-        console.log(values)
     }
 
     return (
         <Guest>
             <form className='flex gap-10 flex-col w-full min-w-160px max-w-screen-sm mx-auto sm:w-1/2' onSubmit={submit} /*method="POST"*/>
                 <label className="flex flex-col">
-                    <span>Címke neve:</span>
+                    <span>Tárgy neve:</span>
                     <input
                         className={errors.name ? `placeholder-red-500` : null}
                         id="name"
@@ -74,51 +69,48 @@ export default function Edit(props) {
                         onChange={handleChange}
                     />
                 </label>
-                <div>
-                    Legyen látható?
-                    <div className='flex flex-col items-center gap-0 xs:flex-row xs:gap-10'>
-                        <label>
-                            Igen
-                            <input
-                                type="radio"
-                                value={true}
-                                name="true"
-                                id='display'
-                                onChange={handleRadioChange}
-                                checked={values.display === true}
-                            />
-                        </label>
-                        <label>
-                            Nem
-                            <input
-                                type="radio"
-                                value={false}
-                                name="false"
-                                id='display'
-                                onChange={handleRadioChange}
-                                checked={values.display === false}
-                            />
-                        </label>
-                    </div>
-                </div>
                 <label className="flex flex-col gap-5">
-                    <span>Színe:</span>
-                    <div className="flex flex-col justify-center items-center gap-5 xs:flex-row">
-                        <HexColorPicker color={values.color} onChange={setColor} />
-                        <div className="w-40 h-40" style={{ backgroundColor: values.color }}></div>
-                    </div>
-                    <input
-                        id="color"
-                        type="text"
-                        value={values.color}
+                    <span>Leírás</span>
+                    <textarea
+                        className={errors.description ? `placeholder-red-500` : null}
+                        id="description"
+                        value={values.description}
+                        placeholder={errors.description}
                         onChange={handleChange}
                     />
                 </label>
-
-                <div className="flex justify-around">
-                    <button className='border-10 border-black-200' type="submit" disabled={false}>KÉSZ</button>
-                    <button className='border-10 border-black-200' onClick={destroy} disabled={values !== initState}>TÖRÖL</button>
+                <div>
+                    Címkék:
+                    <div className='flex flex-col items-center gap-0 xs:flex-row xs:gap-10'>
+                        <div className='flex flex-wrap gap-2'>
+                            {all_labels.map(e => (
+                                <label key={e.id} className='flex items-center gap-3'>
+                                    <input
+                                        type="checkbox"
+                                        value={e.id}
+                                        name={e.id}
+                                        id={e.id}
+                                        onChange={handleCheckBoxChange}
+                                        checked={formLabels.includes(e.id)}
+                                    />
+                                    <div
+                                        className='rounded px-2 py-1'
+                                        key={e.name}
+                                        style={{ background: `${e.color}`, color: isColorDark(e.color) ? 'white' : 'black' }}
+                                        onClick={() => console.log(e.name)}
+                                    >
+                                        {e.name}
+                                    </div>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
                 </div>
+
+                <input type="file" onChange={e => setValues(values => ({ ...values, image: e.target.files[0] }))} />
+                <img src={values.image ? URL.createObjectURL(values.image) : item.image ? `${window.location.origin}/storage/${item.image}` : placeholder} />
+
+                <button className='border-10 border-black-200' type="submit" disabled={false}>KÉSZ</button>
             </form>
         </Guest>
     );

@@ -123,13 +123,6 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
-        //manuálisan 404?
-        $img = null;
-        //error_log(Storage::disk('public')->exists($item->image));
-        //error_log(Storage::disk('public')->get($item->image));
-        error_log(env('url'));
-
-
         return Inertia::render('Items/Show', [
             'item' => Item::find($item->id),
             'labels' => Item::find($item->id)->label,
@@ -145,7 +138,11 @@ class ItemController extends Controller
      */
     public function edit(Item $item)
     {
-        //
+        return Inertia::render('Items/Edit', [
+            'item' => Item::find($item->id),
+            'active_labels' => Item::find($item->id)->label,
+            'all_labels' => Label::all(),
+        ]);
     }
 
     /**
@@ -157,7 +154,66 @@ class ItemController extends Controller
      */
     public function update(Request $request, Item $item)
     {
-        //
+        //error_log(Storage::disk('public')->exists($item->image));
+
+            //error_log(1 == TRUE);
+
+        //error_log($request->hasFile('image'));
+        error_log($request->image);
+        $label_ids = Label::pluck('id')->toArray();
+        $validated = $request->validate(
+            [
+                'name' => 'required|min:3|max:25',
+                'description' => 'required|max:255',
+                'image' => 'nullable|file|image|max:4096',
+                'formLabels' => 'array',
+                'formLabels.*' => Rule::in($label_ids)
+            ],
+            [
+                'name.required' => 'Név megadása kötelező!',
+                'name.min' => 'A tárgy nevének min. 3 karaterből kell állnia',
+                'name.max' => 'A tárgy neve maximum 25 karakter lehet!',
+
+                'description.required' => 'Leírás megadása kötelező!',
+                'description.max' => 'A leírás max. 255 karakter lehet!',
+
+                'image.file' => 'Kérjük képet töltsön fel!',
+                'image.max' => 'A feltöltött kép túl nagy!',
+                //'formLabels.*' => 'Ilyen címke nincs!'
+            ]
+        );
+
+        //van feltöltött fájl?
+        if ($request->hasFile('image')) {
+            //Megvan a régi fájl?
+            if (Storage::disk('public')->exists($item->image)) {
+                //Régi fájl törlése
+                Storage::disk('public')->delete($item->image);
+            }
+
+            $file = $request->file('image');
+
+            $image_path = 'image_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+
+            Storage::disk('public')
+                ->put(
+                    // File útvonala
+                    $image_path,
+                    // File tartalma
+                    $file->get()
+                );
+
+            $item->image = $image_path;
+        }
+
+
+
+        $item->name = $validated['name'];
+        $item->description = $validated['description'];
+        $item->save();
+
+        $item->label()->sync($request->input('formLabels'));
+        return Redirect::route('items.index')->with('item_created', $validated['name']);
     }
 
     /**
