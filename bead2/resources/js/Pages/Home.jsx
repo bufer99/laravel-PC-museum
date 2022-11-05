@@ -10,7 +10,7 @@ export default function Welcome(props) {
     return (
         <Guest>
             {props.label && `Postok a ${props.label.name} címkével`}
-            <div className="flex items-center flex-col">
+            <div className="flex items-center flex-col gap-10">
                 {props.items.data.map(e => (
                     <Item key={e.id} item={e} />
                 )
