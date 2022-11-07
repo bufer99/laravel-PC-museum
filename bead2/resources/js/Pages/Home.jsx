@@ -8,7 +8,7 @@ import Pagination from '@/Components/Pagination';
 export default function Welcome(props) {
     console.log(props)
     return (
-        <Guest>
+        <Guest user={props.auth.user}>
             {props.label && `Postok a ${props.label.name} címkével`}
             <div className="flex items-center flex-col gap-10">
                 {props.items.data.map(e => (
