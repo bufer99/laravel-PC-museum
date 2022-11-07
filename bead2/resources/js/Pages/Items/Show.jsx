@@ -16,13 +16,13 @@ export default function Show(props) {
 
     {/*postot összehúzni*/ }
     return (
-        <Guest>
+        <Guest user={props.auth.user}>
             <div className='flex flex-col max-w-screen-md mx-auto items-center gap-2 mt-5'>
                 <div className='flex justify-between w-full uppercase font-bold'>
                     <div>{item.name}</div>
-                    <Link href={route('items.edit', item)}>
+                    {props.auth.user.is_admin === 1 && <Link href={route('items.edit', item)}>
                         SZERKESZT
-                    </Link>
+                    </Link>}
                 </div>
                 <div><img src={item.image ? `${window.location.origin}/storage/${item.image}` : placeHolder}></img></div>
                 <div className='flex flex-wrap gap-2 w-full'>
@@ -42,7 +42,7 @@ export default function Show(props) {
                 <div className="border-b-2 font-bold">{comments.length} Comments </div>
                 <div className='flex flex-col gap-3'>
                     {comments.map(e => (
-                        <Comment key={e.id} data={e} SetActive={setActiveComment} active={activeComment === e.id} />
+                        <Comment key={e.id} data={e} SetActive={setActiveComment} active={activeComment === e.id} auth={props.auth} />
                     ))}
                 </div>
             </div>

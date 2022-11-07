@@ -35,6 +35,11 @@ export default function Edit(props) {
         }
     }, [errors])
 
+
+    useEffect(() => {
+        console.log(values)
+    }, [values])
+
     const handleChange = (e) => {
         //console.log(errors[e.target.id])
 
@@ -49,14 +54,14 @@ export default function Edit(props) {
     const submit = (e) => {
         e.preventDefault()
         console.log(values)
-        const data = { _method: 'put',...values, formLabels }
+        const data = { _method: 'put', ...values, formLabels }
         console.log(data)
         Inertia.post(`/items/${item.id}`, data);
 
     }
 
     return (
-        <Guest>
+        <Guest user={props.auth.user}>
             <form className='flex gap-10 flex-col w-full min-w-160px max-w-screen-sm mx-auto sm:w-1/2' onSubmit={submit} /*method="POST"*/>
                 <label className="flex flex-col">
                     <span>Tárgy neve:</span>
@@ -111,6 +116,13 @@ export default function Edit(props) {
                 <img src={values.image ? URL.createObjectURL(values.image) : item.image ? `${window.location.origin}/storage/${item.image}` : placeholder} />
 
                 <button className='border-10 border-black-200' type="submit" disabled={false}>KÉSZ</button>
+                <button
+                    type='button'
+                    onClick={
+                        () => Inertia.delete(`/items/${item.id}`, {
+                            onBefore: () => confirm(`Biztosan törli a(z) ${item.id} azonosítójú Tárgyat?`)
+                        })}
+                >TÖRÖL</button>
             </form>
         </Guest>
     );

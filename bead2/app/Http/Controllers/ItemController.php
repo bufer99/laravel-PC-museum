@@ -159,7 +159,7 @@ class ItemController extends Controller
             //error_log(1 == TRUE);
 
         //error_log($request->hasFile('image'));
-        //error_log($request->image);
+        error_log($request->image);
         $label_ids = Label::pluck('id')->toArray();
         $validated = $request->validate(
             [
@@ -224,6 +224,10 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
-        //
+        $item->delete();
+
+        Session::flash('item_deleted', $item->name);
+
+        return Redirect::route('items.index');
     }
 }

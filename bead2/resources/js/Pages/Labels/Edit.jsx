@@ -70,7 +70,7 @@ export default function Edit(props) {
     }
 
     return (
-        <Guest>
+        <Guest user={props.auth.user}>
             <form className='flex gap-10 flex-col w-full min-w-160px max-w-screen-sm mx-auto sm:w-1/2' onSubmit={submit} /*method="POST"*/>
                 <label className="flex flex-col">
                     <span>Címke neve:</span>

@@ -10,16 +10,15 @@ export default function Welcome(props) {
     return (
         <Guest user={props.auth.user}>
             {props.label && `Postok a ${props.label.name} címkével`}
-            <div className="flex items-center flex-col gap-10">
+            <div className="flex items-center flex-col gap-10 mb-8">
                 {props.items.data.map(e => (
                     <Item key={e.id} item={e} />
                 )
                 )}
             </div>
-            {/**Ezt a Paginationt lehetne route('items.VALAMI, $page)-el mert most mindig ujratolti ??
-             * URL paramétereket le kell védeni
-            */}
-            <Pagination data={props.items} />
+            <div className="mb-8">
+                <Pagination data={props.items} />
+            </div>
         </Guest>
     );
 }

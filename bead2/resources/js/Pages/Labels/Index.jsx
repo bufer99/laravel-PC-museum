@@ -8,8 +8,8 @@ export default function Index(props) {
     const { labels } = props;
 
     return (
-        <Guest>
-            <div className="h-full flex justify-center items-center">
+        <Guest user={props.auth.user}>
+            <div className="flex justify-center items-center mt-40">
                 <div className='flex flex-wrap gap-2 w-full overflow-y-scroll w-1/2'>
                     {labels.map(e => (
                         <Link href={route('labels.edit', e)}>

@@ -6,7 +6,8 @@ import { usePage } from '@inertiajs/inertia-react'
 import { HexColorPicker } from "react-colorful";
 
 
-export default function Create() {
+export default function Create(props) {
+    console.log(props)
     const { errors, flash } = usePage().props
 
     const [values, setValues] = useState({
@@ -71,7 +72,7 @@ export default function Create() {
     }
 
     return (
-        <Guest>
+        <Guest user={props.auth.user}>
             <form className='flex gap-10 flex-col w-full min-w-160px max-w-screen-sm mx-auto sm:w-1/2' onSubmit={submit} /*method="POST"*/>
                 <label className="flex flex-col">
                     <span>Címke neve:</span>

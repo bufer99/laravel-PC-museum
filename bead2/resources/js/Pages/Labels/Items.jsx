@@ -8,7 +8,7 @@ import Pagination from '@/Components/Pagination';
 export default function Items(props) {
     console.log(props)
     return (
-        <Guest>
+        <Guest user={props.auth.user}>
             Postok a {props.label.name} címkével
             <div className="flex items-center flex-col">
                 {props.items.data.map(e => (

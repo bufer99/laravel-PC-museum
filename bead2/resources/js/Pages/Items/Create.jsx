@@ -55,7 +55,7 @@ export default function Create(props) {
     }
 
     return (
-        <Guest>
+        <Guest user={props.auth.user}>
             <form className='flex gap-10 flex-col w-full min-w-160px max-w-screen-sm mx-auto sm:w-1/2' onSubmit={submit} /*method="POST"*/>
                 <label className="flex flex-col">
                     <span>Tárgy neve:</span>
@@ -95,7 +95,7 @@ export default function Create(props) {
                                     <div
                                         className='rounded px-2 py-1'
                                         key={e.name}
-                                        style={{ background: `${e.color}`, color: isColorDark(e.color) ? 'white' : 'black'}}
+                                        style={{ background: `${e.color}`, color: isColorDark(e.color) ? 'white' : 'black' }}
                                         onClick={() => console.log(e.name)}
                                     >
                                         {e.name}

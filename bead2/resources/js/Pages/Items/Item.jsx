@@ -8,12 +8,12 @@ export default function Item({ item }) {
     console.log(window.location.origin)
     return (
         <div className="border-t flex flex-col">
-            <div className='font-bold'>{name}</div>
+            <div className='font-bold text-xl'>{name}</div>
             <img className='w-[600px]' src={image ? `${window.location.origin}/storage/${image}` : placeholder}></img>
             <div className="flex flex-col gap-2 mt-3">
                 <div>{description.slice(0, 30)}...</div>
-                <div className="w-fit rounded-lg bg-sky-500">
-                    <Link className="p-10" href={route('items.show', item)}>
+                <div className="w-fit rounded-lg bg-sky-500 py-1">
+                    <Link className="px-10 " href={route('items.show', item)}>
                         Tovább
                     </Link>
                 </div>
