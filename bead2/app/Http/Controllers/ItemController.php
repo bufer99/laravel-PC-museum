@@ -18,6 +18,11 @@ use Illuminate\Validation\Rule;
 class ItemController extends Controller
 {
 
+    public function __construct()
+    {
+        //$this->authorizeResource(Item::class, 'item');
+    }
+
     public function labels(Label $label)
     {
         error_log('LABEL: ' . $label);
@@ -45,6 +50,8 @@ class ItemController extends Controller
      */
     public function create()
     {
+
+        $this->authorize('create',Item::class);
         return Inertia::render('Items/Create', [
             'labels' => Label::all()
         ]);
@@ -58,8 +65,8 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        //error_log(collect($request->input('formLabels'))->implode('-'));
 
+        $this->authorize('create',Item::class);
         $label_ids = Label::pluck('id')->toArray();
         $validated = $request->validate(
             [
@@ -138,6 +145,8 @@ class ItemController extends Controller
      */
     public function edit(Item $item)
     {
+        $this->authorize('update',$item);
+
         return Inertia::render('Items/Edit', [
             'item' => Item::find($item->id),
             'active_labels' => Item::find($item->id)->label,
@@ -154,12 +163,9 @@ class ItemController extends Controller
      */
     public function update(Request $request, Item $item)
     {
-        //error_log(Storage::disk('public')->exists($item->image));
 
-            //error_log(1 == TRUE);
+        $this->authorize('update', $item);
 
-        //error_log($request->hasFile('image'));
-        error_log($request->image);
         $label_ids = Label::pluck('id')->toArray();
         $validated = $request->validate(
             [
@@ -224,6 +230,8 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
+        $this->authorize('delete', $item);
+
         $item->delete();
 
         Session::flash('item_deleted', $item->name);

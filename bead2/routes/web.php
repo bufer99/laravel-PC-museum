@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LabelController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,31 +17,6 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-/**
- * / - home
- * /item
- * /item/label
- * /item/create
- * /item/update
- *
- * label -put/update
- * comment -update/delete
- *
- * Source Controllers
- * Item, Comment, Label
- */
-
-
-/*Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('home');
-*/
 Route::get('/', function () {
     return redirect()-> route('items.index');
 });
@@ -48,10 +24,8 @@ Route::get('/', function () {
 Route::get('items/label/{label}', [ItemController::class, 'labels'])->name('items.label');
 Route::resource('items',ItemController::class);
 Route::resource('labels',LabelController::class);
-//Route::get('/items/{label}', LabelController::class)->name('itemsbyLabel');
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::resource('comments', CommentController::class)->only([
+    'store', 'update', 'destroy'
+]);
 
 require __DIR__.'/auth.php';

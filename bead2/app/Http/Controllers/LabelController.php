@@ -18,6 +18,7 @@ class LabelController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Label::class);
         return Inertia::render('Labels/Index', [
             'labels' => Label::all()
         ]);
@@ -30,6 +31,7 @@ class LabelController extends Controller
      */
     public function create()
     {
+        //$this->authorize('create', Label::class);
         return Inertia::render('Labels/Create');
     }
 
@@ -41,6 +43,7 @@ class LabelController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Label::class);
         $validated = $request->validate(
             [
                 'name' => 'required|unique:labels|max:25',
@@ -95,6 +98,7 @@ class LabelController extends Controller
      */
     public function edit(Label $label)
     {
+        $this->authorize('update', $label);
         return Inertia::render('Labels/Edit', [
             'label' => $label,
         ]);
@@ -109,6 +113,8 @@ class LabelController extends Controller
      */
     public function update(Request $request, Label $label)
     {
+        $this->authorize('update', $label);
+
         $allOtherLabels = Label::whereNotIn('name',[$label->name])->pluck('name');
         $validated = $request->validate(
             [
@@ -150,7 +156,7 @@ class LabelController extends Controller
      */
     public function destroy(Label $label)
     {
-       // $this->authorize('delete', $post);
+        $this->authorize('delete', $label);
 
         $label->delete();
 

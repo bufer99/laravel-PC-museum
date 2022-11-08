@@ -20,7 +20,7 @@ export default function Show(props) {
             <div className='flex flex-col max-w-screen-md mx-auto items-center gap-2 mt-5'>
                 <div className='flex justify-between w-full uppercase font-bold'>
                     <div>{item.name}</div>
-                    {props.auth.user.is_admin === 1 && <Link href={route('items.edit', item)}>
+                    {props.auth?.user?.is_admin === 1 && <Link href={route('items.edit', item)}>
                         SZERKESZT
                     </Link>}
                 </div>
