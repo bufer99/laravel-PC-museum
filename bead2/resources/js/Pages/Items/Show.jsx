@@ -13,7 +13,6 @@ export default function Show(props) {
     const { item, labels, comments } = props;
     const [activeComment, setActiveComment] = useState(null)
 
-
     {/*postot összehúzni*/ }
     return (
         <Guest user={props.auth.user}>
@@ -39,7 +38,10 @@ export default function Show(props) {
             </div>
             {/**MARGIN SET FOR DEV */}
             <div className='max-w-screen-md mx-auto mb-60'>
-                <div className="border-b-2 font-bold">{comments.length} Comments </div>
+                <div className="border-b-2 font-bold flex justify-between">
+                    <div>{comments.length} Comments</div>
+                    {props.auth.user && <div className='hover:underline cursor-pointer'>Kommentelés</div>}
+                </div>
                 <div className='flex flex-col gap-3'>
                     {comments.map(e => (
                         <Comment key={e.id} data={e} SetActive={setActiveComment} active={activeComment === e.id} auth={props.auth} />
