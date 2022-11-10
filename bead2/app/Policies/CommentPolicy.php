@@ -54,7 +54,7 @@ class CommentPolicy
      */
     public function update(User $user, Comment $comment)
     {
-        return $user->id === $comment->author_id;
+        return $user->id === $comment->author_id || $user->is_admin;
     }
 
     /**
@@ -66,7 +66,7 @@ class CommentPolicy
      */
     public function delete(User $user, Comment $comment)
     {
-        return $user->id === $comment->author_id;
+        return $user->id === $comment->author_id || $user->is_admin;
     }
 
     /**

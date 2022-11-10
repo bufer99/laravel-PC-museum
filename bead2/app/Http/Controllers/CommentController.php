@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
+
 
 class CommentController extends Controller
 {
@@ -13,9 +17,10 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Item $item)
     {
         $this->authorize('create', Comment::class);
+        error_log($item);
         $validated = $request->validate(
             [
                 'text' => 'required|max:500',
@@ -27,7 +32,7 @@ class CommentController extends Controller
         );
 
         $comment = Comment::factory()->create($validated);
-
+        error_log($comment);
 
         //Comment / belongTo
         $comment->user()->associate($request->user())->save();
@@ -35,7 +40,7 @@ class CommentController extends Controller
         $comment->item()->associate($item)->save();
 
 
-        //Session::flash('label_created', $validated['name']);
+        Redirect::back()->with('comment_created', $comment->id);
 
     }
 
@@ -46,9 +51,10 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Comment $comment)
     {
-        //
+        $this->authorize('update', $comment);
+        error_log($request);
     }
 
     /**

@@ -7,11 +7,14 @@ import Pagination from '@/Components/Pagination';
 import Comment from './Comment';
 import { useState } from 'react';
 import { isColorDark } from "is-color-dark";
+import { Inertia } from '@inertiajs/inertia';
 
 
 export default function Show(props) {
     const { item, labels, comments } = props;
-    const [activeComment, setActiveComment] = useState(null)
+    const [activeComment, setActiveComment] = useState(null);
+    const [createComment, setCreateComment] = useState(false);
+    const [commentContent, setCommentContent] = useState('');
 
     {/*postot összehúzni*/ }
     return (
@@ -40,9 +43,23 @@ export default function Show(props) {
             <div className='max-w-screen-md mx-auto mb-60'>
                 <div className="border-b-2 font-bold flex justify-between">
                     <div>{comments.length} Comments</div>
-                    {props.auth.user && <div className='hover:underline cursor-pointer'>Kommentelés</div>}
+                    {props.auth.user &&
+                        <div
+                            onClick={() => setCreateComment(!createComment)}
+                            className='hover:underline cursor-pointer'
+                        >Kommentelés
+                        </div>}
                 </div>
                 <div className='flex flex-col gap-3'>
+                    {createComment ? '' :
+                        <div>
+                            <textarea className='w-full' value={commentContent} onChange={(e) => setCommentContent(e.target.value)}></textarea>
+                            <form className="flex gap-5">
+                                <button type='submit' onClick={() => Inertia.post(`/comments/${item.id}`, { text: commentContent })}>Mentés</button>
+                                <button type='button' onClick={() => setCreateComment(false)} >Mégse</button>
+                            </form>
+                        </div>
+                    }
                     {comments.map(e => (
                         <Comment key={e.id} data={e} SetActive={setActiveComment} active={activeComment === e.id} auth={props.auth} />
                     ))}

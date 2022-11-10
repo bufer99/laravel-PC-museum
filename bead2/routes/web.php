@@ -22,10 +22,11 @@ Route::get('/', function () {
 });
 
 Route::get('items/label/{label}', [ItemController::class, 'labels'])->name('items.label');
+Route::post('comments/{item}', [CommentController::class, 'store'])->name('comments.store');
 Route::resource('items',ItemController::class);
 Route::resource('labels',LabelController::class);
 Route::resource('comments', CommentController::class)->only([
-    'store', 'update', 'destroy'
+    'update', 'destroy'
 ]);
 
 require __DIR__.'/auth.php';
