@@ -9,6 +9,7 @@ export default function Guest({ children, user }) {
             <div className="sticky top-0">
                 <div className="h-fit flex justify-start p-2 bg-red-300 sticky">
                     <Link href={route('items.index')}>PCM</Link>
+                    {user && <div>{user.name}</div>}
                     <div className="flex justify-end w-full gap-5">
                         {user ? user.is_admin ?
                             <>

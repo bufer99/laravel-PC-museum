@@ -16,6 +16,8 @@ export default function Show(props) {
     const [createComment, setCreateComment] = useState(false);
     const [commentContent, setCommentContent] = useState('');
 
+    console.log(createComment &&  props.auth.user)
+
     {/*postot összehúzni*/ }
     return (
         <Guest user={props.auth.user}>
@@ -51,7 +53,7 @@ export default function Show(props) {
                         </div>}
                 </div>
                 <div className='flex flex-col gap-3'>
-                    {createComment ? '' :
+                    {!(createComment && props.auth.user) ? '' :
                         <div>
                             <textarea className='w-full' value={commentContent} onChange={(e) => setCommentContent(e.target.value)}></textarea>
                             <form className="flex gap-5">

@@ -41,7 +41,6 @@ class CommentController extends Controller
 
 
         Redirect::back()->with('comment_created', $comment->id);
-
     }
 
     /**
@@ -54,7 +53,20 @@ class CommentController extends Controller
     public function update(Request $request, Comment $comment)
     {
         $this->authorize('update', $comment);
-        error_log($request);
+
+        $validated = $request->validate(
+            [
+                'text' => 'required|max:500',
+            ],
+            [
+                'text.required' => 'Nem lehet üres komment!',
+                'text.max' => 'Max.: 500 karakter fér bele!'
+            ]
+        );
+
+        $comment->text = $validated['text'];
+        $comment->save();
+        Redirect::back()->with('comment_edited', $comment->id);
     }
 
     /**
@@ -63,8 +75,12 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Comment $comment)
     {
-        //
+        $this->authorize('delete', $comment);
+
+        $comment->delete();
+
+        Redirect::back()->with('comment_deleted', $comment->id);
     }
 }
