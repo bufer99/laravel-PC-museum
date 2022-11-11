@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Inertia } from '@inertiajs/inertia'
 import { Link, Head } from '@inertiajs/inertia-react';
-import Guest from '@/Layouts/GuestLayout';
+import Layout from '@/Layouts/Layout';
 import { usePage } from '@inertiajs/inertia-react'
 import { HexColorPicker } from "react-colorful";
 
 
 export default function Create(props) {
-    console.log(props)
     const { errors, flash } = usePage().props
 
     const [values, setValues] = useState({
@@ -27,30 +26,22 @@ export default function Create(props) {
     }, [errors])
 
     const handleRadioChange = (e) => {
-        //console.log(e.target.checked)
         const b = e.target.value === 'true'
-        //console.log(b)
         setValues(values => ({
             ...values,
             [e.target.id]: b,
         }))
-        console.log(values)
     }
 
     const handleChange = (e) => {
-        console.log(errors[e.target.id])
-
         setValues(values => ({
             ...values,
             [e.target.id]: e.target.value,
         }))
-
-        console.log(values)
     }
 
     const submit = (e) => {
         e.preventDefault()
-        console.log(values)
         Inertia.post('/labels', values, {
             onSuccess: () => {
                 setValues({
@@ -63,19 +54,17 @@ export default function Create(props) {
     }
 
     const setColor = (e) => {
-        console.log(e)
         setValues(values => ({
             ...values,
             ['color']: e,
         }))
-        console.log(values)
     }
 
     return (
-        <Guest user={props.auth.user}>
+        <Layout user={props.auth.user}>
             <form className='flex gap-10 flex-col w-full min-w-160px max-w-screen-sm mx-auto sm:w-1/2' onSubmit={submit} /*method="POST"*/>
                 <label className="flex flex-col">
-                    <span>Címke neve:</span>
+                    <span className='font-bold'>Címke neve:</span>
                     <input
                         className={errors.name ? `placeholder-red-500` : null}
                         id="name"
@@ -86,11 +75,12 @@ export default function Create(props) {
                     />
                 </label>
                 <div>
-                    Legyen látható?
+                    <span className="font-bold">Legyen látható?</span>
                     <div className='flex flex-col items-center gap-0 xs:flex-row xs:gap-10'>
                         <label>
                             Igen
                             <input
+                                className='ml-1'
                                 type="radio"
                                 value={true}
                                 name="true"
@@ -102,6 +92,7 @@ export default function Create(props) {
                         <label>
                             Nem
                             <input
+                                className='ml-1'
                                 type="radio"
                                 value={false}
                                 name="false"
@@ -113,7 +104,7 @@ export default function Create(props) {
                     </div>
                 </div>
                 <label className="flex flex-col gap-5">
-                    <span>Színe:</span>
+                    <span className='font-bold'> Színe: </span>
                     <div className="flex flex-col justify-center items-center gap-5 xs:flex-row">
                         <HexColorPicker color={values.color} onChange={setColor} />
                         <div className="w-40 h-40" style={{ backgroundColor: values.color }}></div>
@@ -128,8 +119,12 @@ export default function Create(props) {
                     />
                 </label>
 
-                <button className='border-10 border-black-200' type="submit" disabled={false}>KÉSZ</button>
+                <span className='bg-green-500 w-fit mx-auto p-2 font-bold rounded'>
+                    <button type="submit">
+                        MENTÉS
+                    </button>
+                </span>
             </form>
-        </Guest>
+        </Layout>
     );
 }

@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Inertia } from '@inertiajs/inertia'
-import { Link, Head } from '@inertiajs/inertia-react';
-import Guest from '@/Layouts/GuestLayout';
+import Layout from '@/Layouts/Layout';
 import { usePage } from '@inertiajs/inertia-react'
 import placeholder from '../../../../public/images/placeholder.png';
 import { isColorDark } from "is-color-dark";
 
 export default function Edit(props) {
     const { errors, flash } = usePage().props
-    console.log(props)
     const { item, all_labels, active_labels } = props;
 
     const [values, setValues] = useState({
@@ -20,7 +18,6 @@ export default function Edit(props) {
     const [formLabels, setFormLabels] = useState(active_labels.map(e => e.id));
 
     const handleCheckBoxChange = (e) => {
-        //console.log(e.target)
         if (formLabels.includes(Number.parseInt(e.target.id))) setFormLabels(formLabels.filter(id => id !== Number.parseInt(e.target.id)))
         else setFormLabels([...formLabels, Number.parseInt(e.target.id)])
     }
@@ -35,33 +32,21 @@ export default function Edit(props) {
         }
     }, [errors])
 
-
-    useEffect(() => {
-        console.log(values)
-    }, [values])
-
     const handleChange = (e) => {
-        //console.log(errors[e.target.id])
-
         setValues(values => ({
             ...values,
             [e.target.id]: e.target.value,
         }))
-
-        //console.log(values)
     }
 
     const submit = (e) => {
         e.preventDefault()
-        console.log(values)
         const data = { _method: 'put', ...values, formLabels }
-        console.log(data)
         Inertia.post(`/items/${item.id}`, data);
-
     }
 
     return (
-        <Guest user={props.auth.user}>
+        <Layout user={props.auth.user}>
             <form className='flex gap-10 flex-col w-full min-w-160px max-w-screen-sm mx-auto sm:w-1/2' onSubmit={submit} /*method="POST"*/>
                 <label className="flex flex-col">
                     <span>Tárgy neve:</span>
@@ -74,8 +59,8 @@ export default function Edit(props) {
                         onChange={handleChange}
                     />
                 </label>
-                <label className="flex flex-col gap-5">
-                    <span>Leírás</span>
+                <label className="flex flex-col">
+                    <span>Leírás:</span>
                     <textarea
                         className={errors.description ? `placeholder-red-500` : null}
                         id="description"
@@ -102,7 +87,6 @@ export default function Edit(props) {
                                         className='rounded px-2 py-1'
                                         key={e.name}
                                         style={{ background: `${e.color}`, color: isColorDark(e.color) ? 'white' : 'black' }}
-                                        onClick={() => console.log(e.name)}
                                     >
                                         {e.name}
                                     </div>
@@ -124,6 +108,6 @@ export default function Edit(props) {
                         })}
                 >TÖRÖL</button>
             </form>
-        </Guest>
+        </Layout>
     );
 }

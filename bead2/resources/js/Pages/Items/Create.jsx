@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Inertia } from '@inertiajs/inertia'
-import { Link, Head } from '@inertiajs/inertia-react';
-import Guest from '@/Layouts/GuestLayout';
+import Layout from '@/Layouts/Layout';
 import { usePage } from '@inertiajs/inertia-react'
 import placeholder from '../../../../public/images/placeholder.png';
 import { isColorDark } from "is-color-dark";
 
 export default function Create(props) {
-    const { errors, flash } = usePage().props
+    const { errors, flash, csrf_token } = usePage().props
 
     const { labels } = props;
 
@@ -20,7 +19,6 @@ export default function Create(props) {
     const [formLabels, setFormLabels] = useState([]);
 
     const handleCheckBoxChange = (e) => {
-        //console.log(e.target)
         if (formLabels.includes(Number.parseInt(e.target.id))) setFormLabels(formLabels.filter(id => id !== Number.parseInt(e.target.id)))
         else setFormLabels([...formLabels, Number.parseInt(e.target.id)])
     }
@@ -36,29 +34,24 @@ export default function Create(props) {
     }, [errors])
 
     const handleChange = (e) => {
-        //console.log(errors[e.target.id])
-
         setValues(values => ({
             ...values,
             [e.target.id]: e.target.value,
         }))
-
-        //console.log(values)
     }
 
     const submit = (e) => {
         e.preventDefault()
-        console.log(values)
         Inertia.post('/items', { ...values, formLabels }, {
             forceFormData: true,
         })
     }
 
     return (
-        <Guest user={props.auth.user}>
-            <form className='flex gap-10 flex-col w-full min-w-160px max-w-screen-sm mx-auto sm:w-1/2' onSubmit={submit} /*method="POST"*/>
+        <Layout user={props.auth.user}>
+            <form className='flex mb-10 gap-10 flex-col w-full min-w-160px max-w-screen-sm mx-auto sm:w-1/2' onSubmit={submit} /*method="POST"*/>
                 <label className="flex flex-col">
-                    <span>Tárgy neve:</span>
+                    <span className='font-bold'>Tárgy neve:</span>
                     <input
                         className={errors.name ? `placeholder-red-500` : null}
                         id="name"
@@ -68,8 +61,8 @@ export default function Create(props) {
                         onChange={handleChange}
                     />
                 </label>
-                <label className="flex flex-col gap-5">
-                    <span>Leírás</span>
+                <label className="flex flex-col">
+                    <span className='font-bold'>Leírás:</span>
                     <textarea
                         className={errors.description ? `placeholder-red-500` : null}
                         id="description"
@@ -79,7 +72,7 @@ export default function Create(props) {
                     />
                 </label>
                 <div>
-                    Címkék:
+                    <span className='font-bold'>Címkék:</span>
                     <div className='flex flex-col items-center gap-0 xs:flex-row xs:gap-10'>
                         <div className='flex flex-wrap gap-2'>
                             {labels.map(e => (
@@ -96,7 +89,6 @@ export default function Create(props) {
                                         className='rounded px-2 py-1'
                                         key={e.name}
                                         style={{ background: `${e.color}`, color: isColorDark(e.color) ? 'white' : 'black' }}
-                                        onClick={() => console.log(e.name)}
                                     >
                                         {e.name}
                                     </div>
@@ -109,8 +101,14 @@ export default function Create(props) {
                 <input type="file" onChange={e => setValues(values => ({ ...values, image: e.target.files[0] }))} />
                 <img src={values.image ? URL.createObjectURL(values.image) : placeholder} />
 
-                <button className='border-10 border-black-200' type="submit" disabled={false}>KÉSZ</button>
+
+                <span className='bg-green-500 w-fit mx-auto p-2 font-bold rounded'>
+                    <button type="submit">
+                        MENTÉS
+                    </button>
+                </span>
+
             </form>
-        </Guest>
+        </Layout>
     );
 }

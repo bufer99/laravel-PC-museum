@@ -1,15 +1,25 @@
 import React from 'react';
-import { Link, Head } from '@inertiajs/inertia-react';
-import Guest from '@/Layouts/GuestLayout';
+import Layout from '@/Layouts/Layout';
 
 import Item from '@/Pages/Items/Item';
 import Pagination from '@/Components/Pagination';
+import { isColorDark } from "is-color-dark";
 
 export default function Welcome(props) {
-    console.log(props)
+
+    const { label } = props;
+
     return (
-        <Guest user={props.auth.user}>
-            {props.label && `Postok a ${props.label.name} címkével`}
+        <Layout user={props.auth.user}>
+            {label &&
+                <span className='flex gap-2 justify-center items-center font-bold my-2'>
+                    <span>Tárgyak</span>
+                    <span style={{ background: `${label.color}`, color: isColorDark(label.color) ? 'white' : 'black' }} className='rounded px-2 py-1'>
+                        {label.name}
+                    </span>
+                    <span>címkével: {props.items.data.length}db</span>
+                </span>
+            }
             <div className="flex items-center flex-col gap-10 mb-8">
                 {props.items.data.map(e => (
                     <Item key={e.id} item={e} />
@@ -19,6 +29,6 @@ export default function Welcome(props) {
             <div className="mb-8">
                 <Pagination data={props.items} />
             </div>
-        </Guest>
+        </Layout>
     );
 }

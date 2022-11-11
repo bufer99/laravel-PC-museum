@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Head } from '@inertiajs/inertia-react';
-import Guest from '@/Layouts/GuestLayout';
+import Layout from '@/Layouts/Layout';
 import { isColorDark } from "is-color-dark";
 
 export default function Index(props) {
@@ -8,7 +8,7 @@ export default function Index(props) {
     const { labels } = props;
 
     return (
-        <Guest user={props.auth.user}>
+        <Layout user={props.auth.user}>
             <div className="flex justify-center items-center mt-40">
                 <div className='flex flex-wrap gap-2 w-full overflow-y-scroll w-1/2'>
                     {labels.map(e => (
@@ -20,6 +20,6 @@ export default function Index(props) {
                     ))}
                 </div>
             </div>
-        </Guest>
+        </Layout>
     );
 }

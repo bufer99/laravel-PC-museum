@@ -1,24 +1,28 @@
-import React, { useState } from 'react';
-import { Link, Head } from '@inertiajs/inertia-react';
-import Guest from '@/Layouts/GuestLayout';
+import React, { useState, useEffect } from 'react';
 
 import { Inertia } from '@inertiajs/inertia';
-
-import Item from '@/Pages/Items/Item';
-import Pagination from '@/Components/Pagination';
+import { usePage } from '@inertiajs/inertia-react';
 
 export default function Comment({ data, SetActive, active, auth }) {
 
     const { text, id, user } = data;
+    const { errors, flash } = usePage().props;
     const [commentContent, setCommentContent] = useState(text);
     const [editComment, setEditComment] = useState(false);
 
     const submit = (e) => {
-        console.log(e);
         e.preventDefault();
-        Inertia.put(`/comments/${id}`, { text: commentContent });
-        setEditComment(false);
+        Inertia.put(`/comments/${id}`, { text: commentContent },{
+            onSuccess: () => setEditComment(false)
+        });
     }
+
+
+    useEffect(() => {
+        if (errors.length !== 0) {
+            setCommentContent((prevState) => errors.text ? '' : prevState)
+        }
+    }, [errors])
 
     return (
         <div className=''>
@@ -27,7 +31,12 @@ export default function Comment({ data, SetActive, active, auth }) {
                 {(auth.user?.is_admin || auth.user?.id === user.id) && <div className='relative'>
                     <span className='hover:font-bold cursor-pointer' onClick={() => SetActive((prevState) => prevState === id ? null : id)}>. . .</span>
                     {active && <div className="flex flex-col absolute bg-white top-100 right-0 p-3 border-2 border-black-100 rounded z-20">
-                        <div onClick={() => Inertia.delete(`/comments/${id}`, data)} className='hover:font-bold cursor-pointer'>TÖRÖL</div>
+                        <div onClick={() =>
+                            Inertia.delete(`/comments/${id}`, {
+                                onBefore: () => confirm(`Biztos tölri ezt a kommentet?`),
+                            })
+                        }
+                            className='hover:font-bold cursor-pointer'>TÖRÖL</div>
                         <div onClick={() => {
                             setEditComment(!editComment);
                             SetActive(null);
@@ -38,11 +47,15 @@ export default function Comment({ data, SetActive, active, auth }) {
 
             {editComment ?
                 <div>
-                    <textarea className='w-full' value={commentContent} onChange={(e) => setCommentContent(e.target.value)}></textarea>
-                    <form className="flex gap-5">
-                        <button
-                            type='submit'
-                            onClick={submit}>Mentés</button>
+                    <textarea
+                        className={`w-full ${errors.text ? 'placeholder-red-500' : null}`}
+                        placeholder={errors.text}
+                        value={commentContent}
+                        onChange={(e) => setCommentContent(e.target.value)}
+                    >
+                    </textarea>
+                    <form className="flex gap-5" onSubmit={submit}>
+                        <button type='submit'>Mentés</button>
                         <button type='button' onClick={() => setEditComment(false)} >Mégse</button>
                     </form>
                 </div>
