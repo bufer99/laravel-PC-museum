@@ -8,6 +8,7 @@ import { isColorDark } from "is-color-dark";
 export default function Welcome(props) {
 
     const { label } = props;
+    console.log(props);
 
     return (
         <Layout user={props.auth.user}>
@@ -17,7 +18,7 @@ export default function Welcome(props) {
                     <span style={{ background: `${label.color}`, color: isColorDark(label.color) ? 'white' : 'black' }} className='rounded px-2 py-1'>
                         {label.name}
                     </span>
-                    <span>címkével: {props.items.data.length}db</span>
+                    <span>címkével: {props.items_count}db</span>
                 </span>
             }
             <div className="flex items-center flex-col gap-10 mb-8">

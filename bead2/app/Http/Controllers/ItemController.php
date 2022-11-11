@@ -28,7 +28,8 @@ class ItemController extends Controller
         error_log('LABEL: ' . $label);
         return Inertia::render('Home', [
             'label' => $label,
-            'items' => Label::find($label->id)->item()->paginate(5)
+            'items' => Label::find($label->id)->item()->paginate(5),
+            'items_count' => Label::find($label->id)->item()->count(),
         ]);
     }
     /**
