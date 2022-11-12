@@ -99,14 +99,21 @@ export default function Edit(props) {
                 <input type="file" onChange={e => setValues(values => ({ ...values, image: e.target.files[0] }))} />
                 <img src={values.image ? URL.createObjectURL(values.image) : item.image ? `${window.location.origin}/storage/${item.image}` : placeholder} />
 
-                <button className='border-10 border-black-200' type="submit" disabled={false}>KÉSZ</button>
-                <button
-                    type='button'
-                    onClick={
-                        () => Inertia.delete(`/items/${item.id}`, {
+
+                <div className="flex justify-around">
+                    <span className='bg-green-500 w-fit mx-auto p-2 font-bold rounded'>
+                        <button type="submit">
+                            MENTÉS
+                        </button>
+                    </span>
+                    <span className={`w-fit mx-auto p-2 font-bold rounded bg-red-500`}>
+                        <button type='button' className='border-10 border-black-200' onClick={ () => Inertia.delete(`/items/${item.id}`, {
                             onBefore: () => confirm(`Biztosan törli a(z) ${item.id} azonosítójú Tárgyat?`)
-                        })}
-                >TÖRÖL</button>
+                        })} >
+                            TÖRLÉS
+                        </button>
+                    </span>
+                </div>
             </form>
         </Layout>
     );

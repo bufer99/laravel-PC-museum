@@ -49,7 +49,10 @@ export default function Edit(props) {
 
     const destroy = (e) => {
         e.preventDefault()
-        Inertia.delete(`/labels/${id}`, props.label)
+        Inertia.delete(`/labels/${id}`,{
+            data: props.label,
+            onBefore: () => confirm(`Biztosan törölni kívánja a ${props.label.name} címkét?`)
+        })
     }
 
     const setColor = (e) => {

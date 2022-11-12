@@ -76,7 +76,7 @@ class LabelController extends Controller
         //return Redirect::route('labels.create');
 
         //TODO: redirect to labels.create de a form nem resetelődik
-        return Redirect::back()->with('label_created', $validated['name']);
+        return Redirect::route('labels.index')->with('label_created', $validated['name']);
     }
 
     /**

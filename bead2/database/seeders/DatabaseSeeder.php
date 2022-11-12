@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         // user1@szerveroldali.hu
         // user2@...
-        $users_count = rand(5, 10);
+        $users_count = rand(15, 20);
         $users = collect();
         for ($i = 1; $i <= $users_count; $i++) {
             $users->add(

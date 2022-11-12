@@ -8,7 +8,6 @@ import { isColorDark } from "is-color-dark";
 export default function Welcome(props) {
 
     const { label } = props;
-    console.log(props);
 
     return (
         <Layout user={props.auth.user}>
