@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         for ($i = 1; $i <= $users_count; $i++) {
             $users->add(
                 \App\Models\User::factory()->create([
-                    'email' => 'user' . $i . '@szerveroldali.hu'
+                    'email' => 'user' . $i . '@szerveroldali.hu',
                 ])
             );
         }
