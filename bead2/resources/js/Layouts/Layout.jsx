@@ -54,7 +54,7 @@ export default function Layout({ children, user }) {
                     </div>
                 </div>
             </div>
-            <div className='h-4/5 sm:px-1.5'>
+            <div className='h-4/5 px-1.5'>
                 {children}
             </div>
         </div>
