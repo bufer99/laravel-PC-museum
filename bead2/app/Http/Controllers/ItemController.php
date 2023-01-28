@@ -25,10 +25,13 @@ class ItemController extends Controller
 
     public function labels(Label $label)
     {
+        $items = Label::find($label->id)->item()->paginate(5);
+        $items->setPath('/');
+
         error_log('LABEL: ' . $label);
         return Inertia::render('Home', [
             'label' => $label,
-            'items' => Label::find($label->id)->item()->paginate(5),
+            $items,
             'items_count' => Label::find($label->id)->item()->count(),
         ]);
     }
