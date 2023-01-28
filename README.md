@@ -1,4 +1,17 @@
 # PC MUSEUM
+
+https://pc-museum-yvkf9.ondigitalocean.app/
+
+admin:
+  - admin@szerveroldali.hu
+  - adminpwd
+  
+users:
+  - user{1-15}@szerveroldali.hu
+  - password
+
+
+
 ## Beüzemelés
 
 **1.** Composeres csomagok telepítése
